@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "1000748384094",
+    "project_id": "smartbed-c3b9e",
+    "storage_bucket": "smartbed-c3b9e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1000748384094:android:550cee4b3082e20b4f19cf",
+        "android_client_info": {
+          "package_name": "com.technion.smart_bed"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1000748384094-c6tsr5fcv5fviio5gg9stbivivca1t84.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNeaP6EsQhZsl5VHzD3XS2YDwWOu1fzHs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1000748384094-c6tsr5fcv5fviio5gg9stbivivca1t84.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1000748384094-qkqr966sd54uc3jj5pbtfhdau08kole2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.technion.smartbed"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+} 
