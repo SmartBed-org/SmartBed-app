@@ -96,7 +96,24 @@ class _MyHomePageState extends State<MyHomePage> {
                         //   }
                         // }
                       },
-                      icon: Icon(Icons.qr_code_scanner))
+                      icon: const Icon(Icons.qr_code_scanner_rounded)),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.info_rounded,
+                    ),
+                    onPressed: () => showAboutDialog(
+                      context: context,
+                      // applicationIcon: Image(
+                      //   image: AssetImage('graphics/icon/icon.png'),
+                      //   height: 50,
+                      //   width: 50,
+                      // ),
+                      applicationName: 'Smart Bed',
+                      applicationVersion: '1.0.0',
+                      applicationLegalese: '© 2022 Smart Bed team',
+                    ),
+                  )
+
                 ]
             ),
             body: Center(
