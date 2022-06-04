@@ -1,6 +1,8 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:smart_bed/device.dart';
+import 'package:smart_bed/qrscanner_device.dart';
 import 'firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -62,6 +64,40 @@ class _MyHomePageState extends State<MyHomePage> {
               // Here we take the value from the MyHomePage object that was created by
               // the App.build method, and use it to set our appbar title.
               title: Text(widget.title),
+                actions: [
+                  IconButton(
+                      onPressed: () async {
+                        final Device? result =
+                        await Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const QRScannerDeviceScreen()));
+
+                        // if (result != null) {
+                        //   final prescription = PatientServices
+                        //       .instance.currentPatient!
+                        //       .tryFindPrescriptionByName(
+                        //       result.medicine.name);
+                        //   if (prescription != null) {
+                        //     await Navigator.of(context)
+                        //         .push(MaterialPageRoute(
+                        //         builder: (context) => PrescriptionScreen(
+                        //           prescription: prescription,
+                        //         )));
+                        //   } else {
+                        //     await PatientServices.instance.currentPatient!
+                        //         .addNewPrescriptions(result);
+                        //     if (MediaQuery.of(context).accessibleNavigation) {
+                        //       await SemanticsService.announce(
+                        //           result.medicine.name +
+                        //               " has been added to the list of prescriptions.",
+                        //           TextDirection.ltr);
+                        //     }
+                        //   }
+                        // }
+                      },
+                      icon: Icon(Icons.qr_code_scanner))
+                ]
             ),
             body: Center(
               // Center is a layout widget. It takes a single child and positions it
