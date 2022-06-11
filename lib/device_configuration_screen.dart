@@ -8,18 +8,19 @@ import 'package:smart_bed/firestore/firestore_devices.dart';
 
 import 'QR_generator.dart';
 
-class DeviceScreen extends StatefulWidget {
+class DeviceConfigurationScreen extends StatefulWidget {
+  final String title;
   final bool isNewDevice;
   final Device? device;
 
-  const DeviceScreen({Key? key, required this.isNewDevice, this.device})
+  const DeviceConfigurationScreen({Key? key, required this.title, required this.isNewDevice, this.device})
       : super(key: key);
 
   @override
-  State<DeviceScreen> createState() => _DeviceScreenState();
+  State<DeviceConfigurationScreen> createState() => _DeviceConfigurationScreenState();
 }
 
-class _DeviceScreenState extends State<DeviceScreen> {
+class _DeviceConfigurationScreenState extends State<DeviceConfigurationScreen> {
   final _uidTextEditingController = TextEditingController();
   final _roomNumberTextEditingController = TextEditingController();
   final _bedNumberTextEditingController = TextEditingController();
@@ -29,7 +30,7 @@ class _DeviceScreenState extends State<DeviceScreen> {
   late FocusNode myFocusNode;
   final _formKey = GlobalKey<FormState>();
 
-  bool _isButtonEnabled = false;
+  late bool _isButtonEnabled;
 
   @override
   void initState() {
@@ -45,6 +46,7 @@ class _DeviceScreenState extends State<DeviceScreen> {
       _bedNumberTextEditingController.text = widget.device!.bedNumber;
     }
 
+    _isButtonEnabled = !isEnyFieldEmpty();
     myFocusNode = FocusNode();
   }
 
@@ -66,7 +68,7 @@ class _DeviceScreenState extends State<DeviceScreen> {
     return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: const Text('Create new barcode'),
+          title: Text(widget.title),
         ),
         body: Form(
           key: _formKey,
@@ -84,6 +86,7 @@ class _DeviceScreenState extends State<DeviceScreen> {
                     child: TextFormField(
                       enabled: widget.isNewDevice,
                       autofocus: widget.isNewDevice,
+                      keyboardType: TextInputType.number,
                       textInputAction: TextInputAction.next,
                       controller: _uidTextEditingController,
                       decoration: const InputDecoration(

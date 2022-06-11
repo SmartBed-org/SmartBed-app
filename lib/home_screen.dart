@@ -1,8 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:smart_bed/alert_page.dart';
-import 'package:smart_bed/device_screens.dart';
+import 'package:smart_bed/device_configuration_screen.dart';
+import 'package:smart_bed/device_uid.dart';
+import 'package:smart_bed/firestore/firestore_devices.dart';
 import 'package:smart_bed/firestore/firestore_employee.dart';
 import 'package:smart_bed/qrscanner_device.dart';
 
@@ -18,10 +21,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   @override
   void initState() {
     super.initState();
+
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
 
     FirebaseMessaging.instance.getInitialMessage();
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
@@ -32,8 +38,19 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void dispose() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeRight,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
           // Here we take the value from the MyHomePage object that was created by
           // the App.build method, and use it to set our appbar title.
@@ -45,34 +62,24 @@ class _HomeScreenState extends State<HomeScreen> {
                   //     MaterialPageRoute(
                   //         builder: (context) => const QRScannerDeviceScreen()));
 
-                  await Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const QRScannerDeviceScreen()));
+                  final DeviceUID? result = DeviceUID(uid: '21');
 
-                  // if (result != null) {
-                  //   Device device1 = await FirestoreDevices.instance()
-                  //       .getDevices(result.uid);
-                  //
-                  //   await Navigator.of(context).push(MaterialPageRoute(
-                  //       builder: (context) =>
-                  //           DeviceScreen(isNewDevice: false, device: device1)));
-                  //
-                  //   // final prescription = PatientServices
-                  //   //     .instance.currentPatient!
-                  //   //     .tryFindPrescriptionByName(
-                  //   //     result.medicine.name);
-                  //   // if (prescription != null) {
-                  //   //   await Navigator.of(context)
-                  //   //       .push(MaterialPageRoute(
-                  //   //       builder: (context) => PrescriptionScreen(
-                  //   //         prescription: prescription,
-                  //   //       )));
-                  // }
+                  if (result != null) {
+                    // Device device1 = await FirestoreDevices.instance()
+                    //     .getDevices(result.uid);
+
+                    Device device1 = Device(uid: DeviceUID(uid: '21'), bedNumber: '1', roomNumber: '2');
+
+                    await Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) =>
+                            DeviceConfigurationScreen(title: 'Device configuration', isNewDevice: false, device: device1)));
+                  }
                 },
                 icon: const Icon(Icons.qr_code_scanner_rounded)),
             IconButton(
                 onPressed: () async {
                   await Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const DeviceScreen(
+                      builder: (context) => const DeviceConfigurationScreen(title: 'Create new barcode',
                             isNewDevice: true,
                           )));
                 },
@@ -98,8 +105,6 @@ class _HomeScreenState extends State<HomeScreen> {
         padding: const EdgeInsets.all(25.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          // Center is a layout widget. It takes a single child and positions it
-          // in the middle of the parent.
           children: [
             Expanded(
               child: ElevatedButton(
@@ -125,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           style: TextStyle(fontSize: 50.0),
                         )),
             ),
-            const Center(child: const Text('By Smart Bed team'))
+            const Center(child: Text('By Smart Bed team'))
           ],
         ),
       ),
