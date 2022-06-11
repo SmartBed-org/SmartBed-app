@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:smart_bed/alert_page.dart';
 import 'package:smart_bed/device_screens.dart';
-import 'package:smart_bed/device_uid.dart';
 import 'package:smart_bed/firestore/firestore_employee.dart';
 import 'package:smart_bed/qrscanner_device.dart';
 
@@ -17,6 +18,19 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+
+    FirebaseMessaging.instance.getInitialMessage();
+    FirebaseMessaging.onMessageOpenedApp.listen((message) {
+      print("Notification clicked");
+      Navigator.of(context).pushNamed("alert",
+          arguments: AlertData(message.data["room"], message.data["bed"]));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

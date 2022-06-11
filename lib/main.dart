@@ -4,6 +4,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:smart_bed/firestore/firestore_employee.dart';
 import 'package:smart_bed/home_screen.dart';
 import 'package:smart_bed/firebase_options.dart';
+import 'alert_page.dart';
+import 'firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:smart_bed/firestore/firestore_registration_token.dart';
@@ -17,8 +19,8 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
+  
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -63,6 +65,9 @@ class MyApp extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             }
           }),
+	  routes: {
+        "alert": (context) => const AlertPage()
+      },
     );
   }
 
