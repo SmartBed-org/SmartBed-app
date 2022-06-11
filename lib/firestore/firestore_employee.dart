@@ -6,7 +6,7 @@ class FirestoreEmployee {
   FirestoreEmployee.instance()
       : _employees = FirebaseFirestore.instance.collection('Employees');
 
-  Future setRegistrationToken(String userUid, bool working) async {
+  Future setWorking(String userUid, bool working) async {
     await _employees.doc(userUid).set({'working' : working});
   }
 

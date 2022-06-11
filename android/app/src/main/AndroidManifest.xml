@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.technion.smart_bed">
    <application
-        android:label="smart_bed"
+        android:label="Smart Bed"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
