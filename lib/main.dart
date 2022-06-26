@@ -4,7 +4,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:smart_bed/fall_detection.dart';
+import 'package:smart_bed/device.dart';
+import 'package:smart_bed/device_uid.dart';
 import 'package:smart_bed/firestore/firestore_employee.dart';
 import 'package:smart_bed/home_screen.dart';
 import 'package:smart_bed/firebase_options.dart';
@@ -65,8 +66,8 @@ class MyApp extends StatelessWidget {
           if (payload != null) {
             return MaterialPageRoute(
                 builder: (BuildContext context) => FallDetectionScreen(
-                    fallDetection:
-                        FallDetection.fromJson(json.decode(payload))));
+                    device:
+                        Device.fromJson(json.decode(payload))));
           }
         }
       },
@@ -110,7 +111,8 @@ class MyApp extends StatelessWidget {
 
     FirebaseMessaging.onMessageOpenedApp.listen((message) async {
       await navigatorKey.currentState!.pushNamed('/FallDetectionScreen',
-          arguments: jsonEncode(FallDetection(
+          arguments: jsonEncode(Device(
+            uid: DeviceUID(uid: message.data["device"]),
               roomNumber: message.data["room"],
               bedNumber: message.data["bed"])));
     });
@@ -123,7 +125,8 @@ class MyApp extends StatelessWidget {
 
     if (remoteMessage != null) {
       startScreen = FallDetectionScreen(
-          fallDetection: FallDetection(
+          device: Device(
+              uid: DeviceUID(uid: remoteMessage.data["device"]),
               roomNumber: remoteMessage.data["room"],
               bedNumber: remoteMessage.data["bed"]));
     } else {
@@ -179,7 +182,8 @@ class MyApp extends StatelessWidget {
                   priority: Priority.max,
                   importance: Importance.max),
             ),
-            payload: jsonEncode(FallDetection(
+            payload: jsonEncode(Device(
+                uid: DeviceUID(uid: message.data["device"]),
                 roomNumber: message.data["room"],
                 bedNumber: message.data["bed"])));
       }

@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:smart_bed/fall_detection_screen.dart';
 import 'package:smart_bed/device_configuration_screen.dart';
 import 'package:smart_bed/device_uid.dart';
-import 'package:smart_bed/fall_detection.dart';
 import 'package:smart_bed/firestore/firestore_devices.dart';
 import 'package:smart_bed/firestore/firestore_employee.dart';
 import 'package:smart_bed/qrscanner_device.dart';

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:smart_bed/fall_detection.dart';
+import 'package:smart_bed/device.dart';
 import 'package:smart_bed/firestore/firestore_alarms.dart';
 import 'package:smart_bed/home_screen.dart';
 
 class FallDetectionScreen extends StatelessWidget {
 
-  final FallDetection fallDetection;
+  final Device device;
 
-  const FallDetectionScreen({Key? key, required this.fallDetection}) : super(key: key);
+  const FallDetectionScreen({Key? key, required this.device}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -43,11 +43,11 @@ class FallDetectionScreen extends StatelessWidget {
                   ),
                   Spacer(),
                   Expanded(
-                    child: Text("Room: ${fallDetection.roomNumber}",
+                    child: Text("Room: ${device.roomNumber}",
                         style: const TextStyle(fontSize: 32)),
                   ),
                   Expanded(
-                    child: Text("Bed: ${fallDetection.bedNumber}",
+                    child: Text("Bed: ${device.bedNumber}",
                         style: const TextStyle(fontSize: 32)),
                   ),
                   const Spacer(),
@@ -67,8 +67,7 @@ class FallDetectionScreen extends StatelessWidget {
                       flex: 5,
                       child: ElevatedButton(
                           onPressed: () {
-                            // TODO: 21 is constant
-                            FirestoreAlarms.instance().setAlarmCorrectness('21', true);
+                            FirestoreAlarms.instance().setAlarmCorrectness(device.uid.uid, true);
                             Navigator.of(context).pushAndRemoveUntil(
                                 MaterialPageRoute(
                                     builder: (BuildContext context) =>
@@ -83,7 +82,7 @@ class FallDetectionScreen extends StatelessWidget {
                       child: OutlinedButton(
                           onPressed: () {
                             // TODO: 21 is constant
-                            FirestoreAlarms.instance().setAlarmCorrectness('21', false);
+                            FirestoreAlarms.instance().setAlarmCorrectness(device.uid.uid, false);
                             Navigator.of(context).pushAndRemoveUntil(
                                 MaterialPageRoute(
                                     builder: (BuildContext context) =>
