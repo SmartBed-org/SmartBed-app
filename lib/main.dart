@@ -81,7 +81,18 @@ class MyApp extends StatelessWidget {
             } else if (snapshot.connectionState == ConnectionState.done) {
               return snapshot.requireData;
             } else {
-              return const Center(child: CircularProgressIndicator());
+              return Center(
+                  child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: const [
+                  Image(height: 250, width: 250,
+                    image: AssetImage(
+                        'assets/logo.png'),
+                  ),
+                  CircularProgressIndicator(),
+                ],
+              ));
             }
           }),
     );

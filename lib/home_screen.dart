@@ -88,11 +88,11 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               onPressed: () => showAboutDialog(
                 context: context,
-                // applicationIcon: Image(
-                //   image: AssetImage('assets/icon/ic_launcher.png'),
-                //   height: 50,
-                //   width: 50,
-                // ),
+                applicationIcon: const Image(
+                  image: AssetImage('assets/logo.png'),
+                  height: 50,
+                  width: 50,
+                ),
                 applicationName: 'Smart Bed',
                 applicationVersion: '1.0.0',
                 applicationLegalese: '© 2022 Smart Bed team',
