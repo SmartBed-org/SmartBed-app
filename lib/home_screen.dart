@@ -55,18 +55,13 @@ class _HomeScreenState extends State<HomeScreen> {
           actions: [
             IconButton(
                 onPressed: () async {
-                  // final DeviceUID? result = await Navigator.of(context).push(
-                  //     MaterialPageRoute(
-                  //         builder: (context) => const QRScannerDeviceScreen()));
-
-                  final DeviceUID? result = DeviceUID(uid: '21');
+                  final DeviceUID? result = await Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (context) => const QRScannerDeviceScreen()));
 
                   if (result != null) {
-                    // Device device1 = await FirestoreDevices.instance()
-                    //     .getDevices(result.uid);
-
-                    // TODO:
-                    Device device1 = Device(uid: DeviceUID(uid: '21'), bedNumber: '1', roomNumber: '2');
+                    Device device1 = await FirestoreDevices.instance()
+                        .getDevices(result.uid);
 
                     await Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) =>
