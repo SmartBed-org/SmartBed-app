@@ -8,7 +8,7 @@ import 'package:smart_bed/fall_detection.dart';
 import 'package:smart_bed/firestore/firestore_employee.dart';
 import 'package:smart_bed/home_screen.dart';
 import 'package:smart_bed/firebase_options.dart';
-import 'alert_page.dart';
+import 'fall_detection_screen.dart';
 import 'firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 

@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:smart_bed/alert_page.dart';
+import 'package:smart_bed/fall_detection_screen.dart';
 import 'package:smart_bed/device_configuration_screen.dart';
 import 'package:smart_bed/device_uid.dart';
 import 'package:smart_bed/fall_detection.dart';

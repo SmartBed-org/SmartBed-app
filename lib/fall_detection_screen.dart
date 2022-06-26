@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smart_bed/fall_detection.dart';
+import 'package:smart_bed/firestore/firestore_alarms.dart';
 import 'package:smart_bed/home_screen.dart';
 
 class FallDetectionScreen extends StatelessWidget {
@@ -14,15 +15,14 @@ class FallDetectionScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Smart Bed"),
           leading: IconButton(
-              onPressed: () async {
+              onPressed: () {
                 Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(
                         builder: (BuildContext context) =>
                             HomeScreen()),
                         (route) => false);
               },
-              icon: Icon(Icons.arrow_back,
-                  semanticLabel: 'Back button'))
+              icon: const Icon(Icons.arrow_back))
       ),
       body: Padding(
         padding: const EdgeInsets.all(24),
@@ -44,37 +44,53 @@ class FallDetectionScreen extends StatelessWidget {
                   Spacer(),
                   Expanded(
                     child: Text("Room: ${fallDetection.roomNumber}",
-                        style: TextStyle(fontSize: 32)),
+                        style: const TextStyle(fontSize: 32)),
                   ),
                   Expanded(
                     child: Text("Bed: ${fallDetection.bedNumber}",
-                        style: TextStyle(fontSize: 32)),
+                        style: const TextStyle(fontSize: 32)),
                   ),
-                  Spacer(),
+                  const Spacer(),
                 ],
               ),
             ),
-            Spacer(),
+            const Spacer(),
             Expanded(
                 child: Column(
               children: [
-                Text("Was it a false alarm?", style: TextStyle(fontSize: 32)),
-                Spacer(),
+                const Text("Was it a false alarm?", style: TextStyle(fontSize: 32)),
+                const Spacer(),
                 Row(
                   children: [
                     // Spacer(),
                     Expanded(
                       flex: 5,
                       child: ElevatedButton(
-                          onPressed: () => {},
-                          child: Text('Yes', style: TextStyle(fontSize: 32))),
+                          onPressed: () {
+                            // TODO: 21 is constant
+                            FirestoreAlarms.instance().setAlarmCorrectness('21', true);
+                            Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        HomeScreen()),
+                                    (route) => false);
+                          },
+                          child: const Text('Yes', style: TextStyle(fontSize: 32))),
                     ),
                     Spacer(),
                     Expanded(
                       flex: 5,
                       child: OutlinedButton(
-                          onPressed: () => {},
-                          child: Text('No', style: TextStyle(fontSize: 32))),
+                          onPressed: () {
+                            // TODO: 21 is constant
+                            FirestoreAlarms.instance().setAlarmCorrectness('21', false);
+                            Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        HomeScreen()),
+                                    (route) => false);
+                          },
+                          child: const Text('No', style: TextStyle(fontSize: 32))),
                     ),
                     // Spacer()
                   ],
