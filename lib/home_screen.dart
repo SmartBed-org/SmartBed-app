@@ -13,9 +13,10 @@ import 'package:smart_bed/qrscanner_device.dart';
 import 'device.dart';
 
 class HomeScreen extends StatefulWidget {
-  bool is_working = false;
+  // TODO: more elegant (changed to static for 1 load from firebase)
+  static bool isWorking = false;
 
-  HomeScreen({Key? key, required this.is_working}) : super(key: key);
+  HomeScreen({Key? key}) : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -39,6 +40,8 @@ class _HomeScreenState extends State<HomeScreen> {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
+
+    super.dispose();
   }
 
   @override
@@ -104,16 +107,16 @@ class _HomeScreenState extends State<HomeScreen> {
             Expanded(
               child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                      primary: widget.is_working ? Colors.red : Colors.green,
+                      primary: HomeScreen.isWorking ? Colors.red : Colors.green,
                       shape: const CircleBorder(),
                       padding: const EdgeInsets.all(24)),
                   onPressed: () async {
-                    setState(() => widget.is_working = !widget.is_working);
+                    setState(() => HomeScreen.isWorking = !HomeScreen.isWorking);
                     await FirestoreEmployee.instance().setWorking(
                         FirebaseAuth.instance.currentUser!.uid,
-                        widget.is_working);
+                        HomeScreen.isWorking);
                   },
-                  child: widget.is_working
+                  child: HomeScreen.isWorking
                       ? const Text(
                           'End\nShift',
                           textAlign: TextAlign.center,

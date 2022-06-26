@@ -1,15 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:smart_bed/fall_detection.dart';
+import 'package:smart_bed/home_screen.dart';
 
-class AlertPage extends StatelessWidget {
-  const AlertPage({Key? key}) : super(key: key);
+class FallDetectionScreen extends StatelessWidget {
+
+  final FallDetection fallDetection;
+
+  const FallDetectionScreen({Key? key, required this.fallDetection}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    FallDetection data = ModalRoute.of(context)!.settings.arguments as FallDetection;
     return Scaffold(
       appBar: AppBar(
         title: const Text("Smart Bed"),
+          leading: IconButton(
+              onPressed: () async {
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                            HomeScreen()),
+                        (route) => false);
+              },
+              icon: Icon(Icons.arrow_back,
+                  semanticLabel: 'Back button'))
       ),
       body: Padding(
         padding: const EdgeInsets.all(24),
@@ -30,11 +43,11 @@ class AlertPage extends StatelessWidget {
                   ),
                   Spacer(),
                   Expanded(
-                    child: Text("Room: ${data.roomNumber}",
+                    child: Text("Room: ${fallDetection.roomNumber}",
                         style: TextStyle(fontSize: 32)),
                   ),
                   Expanded(
-                    child: Text("Bed: ${data.bedNumber}",
+                    child: Text("Bed: ${fallDetection.bedNumber}",
                         style: TextStyle(fontSize: 32)),
                   ),
                   Spacer(),

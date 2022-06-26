@@ -58,65 +58,71 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       navigatorKey: navigatorKey,
+      onGenerateRoute: (settings) {
+        if (settings.name == '/FallDetectionScreen') {
+          final payload = settings.arguments as String?;
+
+          if (payload != null) {
+            return MaterialPageRoute(
+                builder: (BuildContext context) => FallDetectionScreen(
+                    fallDetection:
+                        FallDetection.fromJson(json.decode(payload))));
+          }
+        }
+      },
       home: FutureBuilder(
           future: initializeApp(),
-          builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+          builder: (BuildContext context, AsyncSnapshot<Widget> snapshot) {
             if (snapshot.hasError) {
               return Scaffold(
                   body: Center(
                       child: Text(snapshot.error.toString(),
                           textDirection: TextDirection.ltr)));
             } else if (snapshot.connectionState == ConnectionState.done) {
-              return HomeScreen(is_working: snapshot.requireData);
+              return snapshot.requireData;
             } else {
               return const Center(child: CircularProgressIndicator());
             }
           }),
-      routes: {"alert": (context) => const AlertPage()},
     );
   }
 
-  Future<bool> initializeApp() async {
+  Future<Widget> initializeApp() async {
+    Widget startScreen;
+
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
 
-    if (FirebaseAuth.instance.currentUser == null) {
-      try {
-        final userCredential = await FirebaseAuth.instance.signInAnonymously();
-        await FirestoreEmployee.instance()
-            .setWorking(FirebaseAuth.instance.currentUser!.uid, false);
-        print("Signed in with temporary account.");
-      } on FirebaseAuthException catch (e) {
-        switch (e.code) {
-          case "operation-not-allowed":
-            print("Anonymous auth hasn't been enabled for this project.");
-            break;
-          default:
-            print("Unknown error.");
-        }
-      }
+    await signInAnonymously();
+    await manageToken();
+
+    FirebaseMessaging.onMessageOpenedApp.listen((message) async {
+      await navigatorKey.currentState!.pushNamed('/FallDetectionScreen',
+          arguments: jsonEncode(FallDetection(
+              roomNumber: message.data["room"],
+              bedNumber: message.data["bed"])));
+    });
+
+    await initLocalNotifications();
+
+    final remoteMessage = await FirebaseMessaging.instance.getInitialMessage();
+    HomeScreen.isWorking = await FirestoreEmployee.instance()
+        .isWorking(FirebaseAuth.instance.currentUser!.uid);
+
+    if (remoteMessage != null) {
+      startScreen = FallDetectionScreen(
+          fallDetection: FallDetection(
+              roomNumber: remoteMessage.data["room"],
+              bedNumber: remoteMessage.data["bed"]));
+    } else {
+      startScreen = HomeScreen();
     }
 
-    final fcmToken = await FirebaseMessaging.instance.getToken();
-    FirestoreRegistrationToken.instance().setRegistrationToken(
-        FirebaseAuth.instance.currentUser!.uid, fcmToken!);
+    return startScreen;
+  }
 
-    FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) async {
-      FirestoreRegistrationToken.instance().setRegistrationToken(
-          FirebaseAuth.instance.currentUser!.uid, fcmToken);
-    }).onError((err) {
-      // Error getting token.
-    });
-
-    FirebaseMessaging.instance.getInitialMessage();
-    FirebaseMessaging.onMessageOpenedApp.listen((message) async {
-      await navigatorKey.currentState!.pushNamed('alert',
-          arguments: FallDetection(
-              roomNumber: message.data["room"],
-              bedNumber: message.data["bed"]));
-    });
-
+  Future<void> initLocalNotifications() async {
     const AndroidNotificationChannel channel = AndroidNotificationChannel(
       'high_importance_channel', // id
       'High Importance Notifications', // title
@@ -128,11 +134,14 @@ class MyApp extends StatelessWidget {
         FlutterLocalNotificationsPlugin();
 
     await flutterLocalNotificationsPlugin.initialize(
-        InitializationSettings(
+        const InitializationSettings(
             android: AndroidInitializationSettings("@mipmap/ic_launcher")),
-        onSelectNotification: ((payload) async =>
-            await navigatorKey.currentState!.pushNamed('alert',
-                arguments: FallDetection.fromJson(json.decode(payload!)))));
+        onSelectNotification: ((payload) async {
+      // if (payload != null) {
+      await navigatorKey.currentState!
+          .pushNamed('/FallDetectionScreen', arguments: payload);
+      // }
+    }));
 
     await flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
@@ -150,7 +159,7 @@ class MyApp extends StatelessWidget {
             notification.hashCode,
             notification.title,
             notification.body,
-            NotificationDetails(
+            const NotificationDetails(
               android: AndroidNotificationDetails(
                   'default_notification_channel_id', 'your channel name',
                   channelDescription: 'your channel description',
@@ -160,12 +169,41 @@ class MyApp extends StatelessWidget {
                   importance: Importance.max),
             ),
             payload: jsonEncode(FallDetection(
-                    roomNumber: message.data["room"],
-                    bedNumber: message.data["bed"])));
+                roomNumber: message.data["room"],
+                bedNumber: message.data["bed"])));
       }
     });
+  }
 
-    return await FirestoreEmployee.instance()
-        .isWorking(FirebaseAuth.instance.currentUser!.uid);
+  Future<void> manageToken() async {
+    final fcmToken = await FirebaseMessaging.instance.getToken();
+    FirestoreRegistrationToken.instance().setRegistrationToken(
+        FirebaseAuth.instance.currentUser!.uid, fcmToken!);
+
+    FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) async {
+      FirestoreRegistrationToken.instance().setRegistrationToken(
+          FirebaseAuth.instance.currentUser!.uid, fcmToken);
+    }).onError((err) {
+      // Error getting token.
+    });
+  }
+
+  Future<void> signInAnonymously() async {
+    if (FirebaseAuth.instance.currentUser == null) {
+      try {
+        final userCredential = await FirebaseAuth.instance.signInAnonymously();
+        await FirestoreEmployee.instance()
+            .setWorking(FirebaseAuth.instance.currentUser!.uid, false);
+        print("Signed in with temporary account.");
+      } on FirebaseAuthException catch (e) {
+        switch (e.code) {
+          case "operation-not-allowed":
+            print("Anonymous auth hasn't been enabled for this project.");
+            break;
+          default:
+            print("Unknown error.");
+        }
+      }
+    }
   }
 }

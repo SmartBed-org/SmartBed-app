@@ -15,11 +15,6 @@ class _QRScannerDeviceScreenState extends State<QRScannerDeviceScreen> {
   final qrKey = GlobalKey(debugLabel: 'QR'); // TODO:
 
   @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: const Text('QR code')),
