@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:smart_bed/alert_page.dart';
 import 'package:smart_bed/device_configuration_screen.dart';
 import 'package:smart_bed/device_uid.dart';
+import 'package:smart_bed/fall_detection.dart';
 import 'package:smart_bed/firestore/firestore_devices.dart';
 import 'package:smart_bed/firestore/firestore_employee.dart';
 import 'package:smart_bed/qrscanner_device.dart';
@@ -28,13 +29,6 @@ class _HomeScreenState extends State<HomeScreen> {
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
-
-    FirebaseMessaging.instance.getInitialMessage();
-    FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      print("Notification clicked");
-      Navigator.of(context).pushNamed("alert",
-          arguments: AlertData(message.data["room"], message.data["bed"]));
-    });
   }
 
   @override
@@ -68,6 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     // Device device1 = await FirestoreDevices.instance()
                     //     .getDevices(result.uid);
 
+                    // TODO:
                     Device device1 = Device(uid: DeviceUID(uid: '21'), bedNumber: '1', roomNumber: '2');
 
                     await Navigator.of(context).push(MaterialPageRoute(
@@ -91,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: () => showAboutDialog(
                 context: context,
                 // applicationIcon: Image(
-                //   image: AssetImage('graphics/icon/icon.png'),
+                //   image: AssetImage('assets/icon/ic_launcher.png'),
                 //   height: 50,
                 //   width: 50,
                 // ),
@@ -122,15 +117,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       ? const Text(
                           'End\nShift',
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 50.0),
+                          style: TextStyle(fontSize: 57.0),
                         )
                       : const Text(
                           'Enter\nShift',
                           textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 50.0),
+                          style: TextStyle(fontSize: 57.0),
                         )),
             ),
-            const Center(child: Text('By Smart Bed team'))
+            const Center(child: Text('By Smart Bed Team',
+              style: TextStyle(fontSize: 16.0),))
           ],
         ),
       ),

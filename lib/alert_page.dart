@@ -1,85 +1,77 @@
 import 'package:flutter/material.dart';
+import 'package:smart_bed/fall_detection.dart';
 
 class AlertPage extends StatelessWidget {
   const AlertPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    AlertData data = ModalRoute.of(context)!.settings.arguments as AlertData;
-    const double textSize = 30.0;
-    const TextStyle myTextStyle =
-    TextStyle(color: Colors.grey, fontSize: textSize);
-
-    var column = Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-
-      children: <Widget>[
-        const Text(
-          'Please check on patient at:',
-          textAlign: TextAlign.center,
-          overflow: TextOverflow.ellipsis,
-          maxLines: 1,
-          style: TextStyle(
-              height: 4,
-              fontWeight: FontWeight.bold,
-              fontSize: 30
-              ),
-        ),
-        InfoCard(
-            title: Text(
-              "Room: ${data.room}",
-              style: myTextStyle,
-            )),
-        InfoCard(
-            title: Text(
-              "Bed: ${data.bed}",
-              style: myTextStyle,
-            ))
-      ],
-    );
-
+    FallDetection data = ModalRoute.of(context)!.settings.arguments as FallDetection;
     return Scaffold(
       appBar: AppBar(
-        title: const Text("SmartBed Alert"),
+        title: const Text("Smart Bed"),
       ),
-      body: Container(
-        // Sets the padding in the main container
-        padding: const EdgeInsets.only(bottom: 2.0),
-        child: Center(
-          child: SingleChildScrollView(child: column),
+      body: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              flex: 3,
+              child: Column(
+                children: [
+                  Spacer(),
+                  const Expanded(
+                    child: Text(
+                      'Fall detected',
+                      style: TextStyle(fontSize: 45),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  Spacer(),
+                  Expanded(
+                    child: Text("Room: ${data.roomNumber}",
+                        style: TextStyle(fontSize: 32)),
+                  ),
+                  Expanded(
+                    child: Text("Bed: ${data.bedNumber}",
+                        style: TextStyle(fontSize: 32)),
+                  ),
+                  Spacer(),
+                ],
+              ),
+            ),
+            Spacer(),
+            Expanded(
+                child: Column(
+              children: [
+                Text("Was it a false alarm?", style: TextStyle(fontSize: 32)),
+                Spacer(),
+                Row(
+                  children: [
+                    // Spacer(),
+                    Expanded(
+                      flex: 5,
+                      child: ElevatedButton(
+                          onPressed: () => {},
+                          child: Text('Yes', style: TextStyle(fontSize: 32))),
+                    ),
+                    Spacer(),
+                    Expanded(
+                      flex: 5,
+                      child: OutlinedButton(
+                          onPressed: () => {},
+                          child: Text('No', style: TextStyle(fontSize: 32))),
+                    ),
+                    // Spacer()
+                  ],
+                ),
+              ],
+            )),
+            const Spacer(),
+          ],
         ),
       ),
     );
-    ;
   }
-}
-
-// Create a reusable stateless widget
-class InfoCard extends StatelessWidget {
-  final Widget title;
-
-  // Constructor. {} here denote that they are optional values i.e you can use as: MyCard()
-  InfoCard({required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.only(bottom: 1.0),
-      child: Card(
-        child: Container(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children: <Widget>[this.title],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class AlertData {
-  String room = 'undefined';
-  String bed = 'undefined';
-
-  AlertData(this.room, this.bed);
 }

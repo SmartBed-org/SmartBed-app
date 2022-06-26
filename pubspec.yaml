@@ -43,6 +43,7 @@ dependencies:
   google_fonts: ^3.0.1
   firebase_messaging: ^11.4.0
   flutter_launcher_icons: ^0.9.3
+  flutter_local_notifications: ^9.6.1
 
 flutter_icons:
   image_path_android: "assets/icon/ic_launcher.png"

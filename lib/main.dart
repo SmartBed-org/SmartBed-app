@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:smart_bed/fall_detection.dart';
 import 'package:smart_bed/firestore/firestore_employee.dart';
 import 'package:smart_bed/home_screen.dart';
 import 'package:smart_bed/firebase_options.dart';
@@ -12,6 +16,8 @@ import 'package:smart_bed/firestore/firestore_registration_token.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = new GlobalKey<NavigatorState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
@@ -19,11 +25,11 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
-  
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Smart Bed',
       theme: FlexThemeData.light(
         fontFamily: GoogleFonts.beVietnamPro().fontFamily,
@@ -51,6 +57,7 @@ class MyApp extends StatelessWidget {
         visualDensity: FlexColorScheme.comfortablePlatformDensity,
         useMaterial3: true,
       ),
+      navigatorKey: navigatorKey,
       home: FutureBuilder(
           future: initializeApp(),
           builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
@@ -65,9 +72,7 @@ class MyApp extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             }
           }),
-	  routes: {
-        "alert": (context) => const AlertPage()
-      },
+      routes: {"alert": (context) => const AlertPage()},
     );
   }
 
@@ -102,6 +107,62 @@ class MyApp extends StatelessWidget {
           FirebaseAuth.instance.currentUser!.uid, fcmToken);
     }).onError((err) {
       // Error getting token.
+    });
+
+    FirebaseMessaging.instance.getInitialMessage();
+    FirebaseMessaging.onMessageOpenedApp.listen((message) async {
+      await navigatorKey.currentState!.pushNamed('alert',
+          arguments: FallDetection(
+              roomNumber: message.data["room"],
+              bedNumber: message.data["bed"]));
+    });
+
+    const AndroidNotificationChannel channel = AndroidNotificationChannel(
+      'high_importance_channel', // id
+      'High Importance Notifications', // title
+      // description: "This channel is used for important notifications.", // description
+      importance: Importance.max,
+    );
+
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
+
+    await flutterLocalNotificationsPlugin.initialize(
+        InitializationSettings(
+            android: AndroidInitializationSettings("@mipmap/ic_launcher")),
+        onSelectNotification: ((payload) async =>
+            await navigatorKey.currentState!.pushNamed('alert',
+                arguments: FallDetection.fromJson(json.decode(payload!)))));
+
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(channel);
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification?.android;
+
+      // If `onMessage` is triggered with a notification, construct our own
+      // local notification to show to users using the created channel.
+      if (notification != null && android != null) {
+        flutterLocalNotificationsPlugin.show(
+            notification.hashCode,
+            notification.title,
+            notification.body,
+            NotificationDetails(
+              android: AndroidNotificationDetails(
+                  'default_notification_channel_id', 'your channel name',
+                  channelDescription: 'your channel description',
+                  fullScreenIntent: true,
+                  icon: "@mipmap/ic_launcher",
+                  priority: Priority.max,
+                  importance: Importance.max),
+            ),
+            payload: jsonEncode(FallDetection(
+                    roomNumber: message.data["room"],
+                    bedNumber: message.data["bed"])));
+      }
     });
 
     return await FirestoreEmployee.instance()
