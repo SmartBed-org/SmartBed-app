@@ -59,12 +59,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           builder: (context) => const QRScannerDeviceScreen()));
 
                   if (result != null) {
-                    Device device1 = await FirestoreDevices.instance()
+                    Device scannedDevice = await FirestoreDevices.instance()
                         .getDevices(result.uid);
 
                     await Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) =>
-                            DeviceConfigurationScreen(title: 'Device configuration', isNewDevice: false, device: device1)));
+                            DeviceConfigurationScreen(title: 'Device configuration', isNewDevice: false, device: scannedDevice)));
                   }
                 },
                 icon: const Icon(Icons.qr_code_scanner_rounded)),
